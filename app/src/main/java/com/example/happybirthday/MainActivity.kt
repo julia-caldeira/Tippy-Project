@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTipPercentLabel: TextView
     private lateinit var tvTipAmount: TextView
     private lateinit var tvTotalAmount: TextView
+    private lateinit var tvTipLevel : TextView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,6 +35,7 @@ class MainActivity : AppCompatActivity() {
         tvTipPercentLabel = findViewById(R.id.tvTipPercentLabel)
         tvTipAmount = findViewById(R.id.tvTipAmount)
         tvTotalAmount = findViewById(R.id.tvTotalAmount)
+        tvTipLevel = findViewById(R.id.tvTipLevel)
 
         seekBarTip.progress = INITIAL_TIP_PERCENTAGE
         tvTipPercentLabel.text = "$INITIAL_TIP_PERCENTAGE %"
@@ -43,6 +45,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "OnProgressChanged para $progress")
                 tvTipPercentLabel.text = "$progress %"
                 computeTipAndTotal()
+                showTipLevel()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -60,6 +63,27 @@ class MainActivity : AppCompatActivity() {
                 computeTipAndTotal()
             }
         })
+    }
+
+    private fun showTipLevel() {
+        /*if(seekBarTip.progress in 0.. 20){
+
+        }
+
+        tvTipLevel */
+        val result : String? = when {
+            seekBarTip.progress in 0..10 -> "Poor"
+            seekBarTip.progress in 10 .. 40 -> "Resoanable"
+            seekBarTip.progress in 40 .. 80 -> "Nice"
+            seekBarTip.progress in 80.. 100 -> "Amazing"
+            else -> null
+        }
+
+        tvTipLevel.setHintTextColor(white)
+
+
+
+
     }
 
     @SuppressLint("SetTextI18n")
