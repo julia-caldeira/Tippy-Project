@@ -1,5 +1,6 @@
 package com.example.happybirthday
 
+import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.media.MediaParser.SeekMap
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +11,8 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
+import java.math.RoundingMode
+import java.text.DecimalFormat
 import java.time.temporal.TemporalAmount
 
 private const val TAG = "MainActivity"
@@ -39,6 +42,7 @@ class MainActivity : AppCompatActivity() {
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 Log.i(TAG, "OnProgressChanged para $progress")
                 tvTipPercentLabel.text = "$progress %"
+                computeTipAndTotal()
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -53,9 +57,33 @@ class MainActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
                 Log.i(TAG, "afterTextChanged: bill amount was updated to $s")
+                computeTipAndTotal()
             }
-
         })
+    }
 
+    @SuppressLint("SetTextI18n")
+    private fun computeTipAndTotal() {
+        // Get the values
+
+        var baseAmount : Double
+        baseAmount = try {
+            etBaseAmount.text.toString().toDouble()
+        }catch (_: java.lang.NumberFormatException){
+            0.0
+        }
+
+        val percentage = seekBarTip.progress.toDouble()
+        // Compute tip and total
+        val tip = baseAmount * percentage / 100
+        val total = baseAmount + tip
+        // Update UI
+        val df = DecimalFormat("#.##")
+        df.roundingMode = RoundingMode.HALF_EVEN
+        val tipAmount = df.format(tip)
+        val totalAmount = "%.2f".format(total)
+
+        tvTipAmount.text = " R$ $tipAmount"
+        tvTotalAmount.text = "R$ $totalAmount"
     }
 }
