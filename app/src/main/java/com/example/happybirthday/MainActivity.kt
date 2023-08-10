@@ -1,5 +1,6 @@
 package com.example.happybirthday
 
+import android.animation.ArgbEvaluator
 import android.annotation.SuppressLint
 import android.content.ContentValues.TAG
 import android.media.MediaParser.SeekMap
@@ -11,6 +12,7 @@ import android.util.Log
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.temporal.TemporalAmount
@@ -39,19 +41,18 @@ class MainActivity : AppCompatActivity() {
 
         seekBarTip.progress = INITIAL_TIP_PERCENTAGE
         tvTipPercentLabel.text = "$INITIAL_TIP_PERCENTAGE %"
+        showTipLevel(INITIAL_TIP_PERCENTAGE)
 
         seekBarTip.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 Log.i(TAG, "OnProgressChanged para $progress")
                 tvTipPercentLabel.text = "$progress %"
                 computeTipAndTotal()
-                showTipLevel()
+                showTipLevel(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-
             override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-
         })
         etBaseAmount.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
@@ -65,24 +66,23 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    private fun showTipLevel() {
-        /*if(seekBarTip.progress in 0.. 20){
-
+    private fun showTipLevel(tipPercent: Int) {
+        val result : String? = when (tipPercent) {
+            in 0..10 -> "Poor"
+            in 10 .. 40 -> "Resoanable"
+            in 40 .. 80 -> "Nice"
+            else -> "Amazing"
         }
+        tvTipLevel.text = result
 
-        tvTipLevel */
-        val result : String? = when {
-            seekBarTip.progress in 0..10 -> "Poor"
-            seekBarTip.progress in 10 .. 40 -> "Resoanable"
-            seekBarTip.progress in 40 .. 80 -> "Nice"
-            seekBarTip.progress in 80.. 100 -> "Amazing"
-            else -> null
-        }
+        // Update color
+        val color = ArgbEvaluator().evaluate(
+            (tipPercent.toFloat() / seekBarTip.max),
+            ContextCompat.getColor(this, R.color.red_800),
+            ContextCompat.getColor(this, R.color.green_200)
+        ) as Int
 
-        tvTipLevel.setHintTextColor(white)
-
-
-
+        tvTipLevel.setTextColor(color)
 
     }
 
