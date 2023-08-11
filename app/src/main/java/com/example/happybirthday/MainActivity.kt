@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import java.math.RoundingMode
 import java.text.DecimalFormat
 import java.time.temporal.TemporalAmount
+import kotlin.properties.Delegates
 
 private const val TAG = "MainActivity"
 private const val INITIAL_TIP_PERCENTAGE = 1
@@ -26,8 +27,10 @@ class MainActivity : AppCompatActivity() {
     private lateinit var tvTipAmount: TextView
     private lateinit var tvTotalAmount: TextView
     private lateinit var tvTipLevel : TextView
-
-
+    private lateinit var etNumberOfPeople : TextView
+    private lateinit var tvTotalByPerson : TextView
+    private var billTotal : Double = 0.0
+    private var currentProgress : Int = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -38,17 +41,21 @@ class MainActivity : AppCompatActivity() {
         tvTipAmount = findViewById(R.id.tvTipAmount)
         tvTotalAmount = findViewById(R.id.tvTotalAmount)
         tvTipLevel = findViewById(R.id.tvTipLevel)
+        etNumberOfPeople = findViewById(R.id.etNumberOfPeople)
+        tvTotalByPerson = findViewById(R.id.tvTotalByPerson)
 
         seekBarTip.progress = INITIAL_TIP_PERCENTAGE
         tvTipPercentLabel.text = "$INITIAL_TIP_PERCENTAGE %"
         showTipLevel(INITIAL_TIP_PERCENTAGE)
 
+
         seekBarTip.setOnSeekBarChangeListener(object: SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
                 Log.i(TAG, "OnProgressChanged para $progress")
                 tvTipPercentLabel.text = "$progress %"
-                computeTipAndTotal()
-                showTipLevel(progress)
+                currentProgress = progress
+                computeChanges(currentProgress)
+                //showTipLevel(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {}
@@ -61,9 +68,41 @@ class MainActivity : AppCompatActivity() {
 
             override fun afterTextChanged(s: Editable?) {
                 Log.i(TAG, "afterTextChanged: bill amount was updated to $s")
-                computeTipAndTotal()
+                billTotal = computeTipAndTotal()
+                computeChanges(currentProgress)
+
+
+
             }
         })
+
+        etNumberOfPeople.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+
+            override fun afterTextChanged(s: Editable?) {
+                computeChanges(currentProgress)
+                Log.i(TAG, "afterTextChanged: number of friends to slip the bill with was updated to $s")
+
+            }
+        })
+    }
+
+    private fun computeChanges(progress: Int){
+        billTotal = computeTipAndTotal()
+        try{
+            computeSplitBill()
+        }catch (_: java.lang.NumberFormatException){}
+        showTipLevel(progress)
+    }
+
+    private fun computeSplitBill() {
+        var denom = etNumberOfPeople.text.toString().toDouble()
+        var result = billTotal / denom
+        Log.i(TAG, "$billTotal / $denom = $result ")
+        tvTotalByPerson.text = result.toString()
+
     }
 
     private fun showTipLevel(tipPercent: Int) {
@@ -87,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("SetTextI18n")
-    private fun computeTipAndTotal() {
+    private fun computeTipAndTotal() : Double {
         // Get the values
 
         var baseAmount : Double
@@ -109,5 +148,7 @@ class MainActivity : AppCompatActivity() {
 
         tvTipAmount.text = " R$ $tipAmount"
         tvTotalAmount.text = "R$ $totalAmount"
+
+        return total
     }
 }

@@ -70,6 +70,7 @@
         android:fontFamily="monospace"
         android:hint="Bill Amount"
         android:inputType="numberDecimal"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         app:layout_constraintBottom_toBottomOf="@+id/tvBaseLabel"
         app:layout_constraintStart_toEndOf="@+id/tvBaseLabel" />
 
@@ -141,7 +142,53 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Small"
         app:layout_constraintEnd_toEndOf="@+id/seekBarTip"
         app:layout_constraintStart_toStartOf="@+id/seekBarTip"
-        app:layout_constraintTop_toBottomOf="@+id/seekBarTip"
-        tools:text="Acceptable" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarTip" />
+
+    <TextView
+        android:id="@+id/tvNumberOfPeople"
+        android:layout_width="91dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="48dp"
+        android:fontFamily="monospace"
+        android:text="Split by number of people"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="@+id/tvBaseLabel"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tvTotalLabel" />
+
+    <EditText
+        android:id="@+id/etNumberOfPeople"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:fontFamily="monospace"
+        android:hint="Number of friends"
+        android:inputType="number"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/tvNumberOfPeople"
+        app:layout_constraintStart_toStartOf="@+id/etBaseAmount" />
+
+    <TextView
+        android:id="@+id/tvTotalByPersonLabel"
+        android:layout_width="92dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="48dp"
+        android:fontFamily="monospace"
+        android:text="Total by Person"
+        android:textAlignment="textEnd"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintEnd_toEndOf="@+id/tvBaseLabel"
+        app:layout_constraintTop_toBottomOf="@+id/tvNumberOfPeople" />
+
+    <TextView
+        android:id="@+id/tvTotalByPerson"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="monospace"
+        android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+        app:layout_constraintBottom_toBottomOf="@+id/tvTotalByPersonLabel"
+        app:layout_constraintStart_toStartOf="@+id/etBaseAmount"
+        tools:text="R$18.90" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
